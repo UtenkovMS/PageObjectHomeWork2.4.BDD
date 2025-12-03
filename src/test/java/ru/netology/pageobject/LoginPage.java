@@ -13,8 +13,8 @@ public class LoginPage {
 
     private final SelenideElement erorMassage = $("[data-test-id='error-notification']");
 
-    // Реализуем доменный метод
-    // authorizationUser - авторизация пользователя
+
+    // Метод авторизация пользователя
     // Для того чтобы метод принимал данные о пользователе, укажем параметр (DataHelper.Authorization info)
 
     public VerificationPage authorizationUser(DataHelper.Authorization info) {

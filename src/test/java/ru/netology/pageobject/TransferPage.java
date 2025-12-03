@@ -27,15 +27,17 @@ public class TransferPage {
     // Перевод денег c карты на карту, в параметры метода передается информация о карте и сумма перевода
     public DashBoardPage transferMoney(DataHelper.CardInfo cardInfo, int amount) {
 
-        //вызваем метод описанный ниже и педаем в параметры информацию о карте и сумме перевода
+        //вызваем метод описанный ниже и передаем в параметры информацию о карте и сумме перевода
         makeTransfer(cardInfo, amount);
 
         return new DashBoardPage();
     }
 
-
     private void makeTransfer(DataHelper.CardInfo cardInfo, int amount) {
 
+        // Класс Integer. - класс, который предоставляет методы работы с целыми числами
+        // в частности класс Integer. позволяет вызывать метод toString(), который преобразует числа в строки
+        // в качестве аргумента в метод toString(amount) мы передаем значение amount.
         amountFild.setValue(Integer.toString(amount));
         cardNumberFild.setValue(cardInfo.getCardNumber());
         button.click();

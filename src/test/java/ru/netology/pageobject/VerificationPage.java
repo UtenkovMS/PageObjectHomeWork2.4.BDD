@@ -10,12 +10,13 @@ import static com.codeborne.selenide.Selenide.$;
 
 public class VerificationPage {
 
-    // Проверку видимости страницы добавили в конструктор,
-    // чтобы данная проверка происходила автоматически каждый раз при загрузке страницы.
+    // Проверка видимости страницы добавили в конструктор,
+    // Чтобы данная проверка происходила автоматически, каждый раз при загрузке страницы.
     public VerificationPage() {
         $("[data-test-id='code']").shouldBe(Condition.visible);
     }
 
+    //Метод, который вводит код верификации
     public DashBoardPage verificationUser(DataHelper.VerificationСode code) {
 
         $("[data-test-id='code'] input").setValue(code.getCode());

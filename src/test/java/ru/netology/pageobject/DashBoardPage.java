@@ -82,10 +82,10 @@ public class DashBoardPage {
         return Integer.parseInt(value);
     }
 
-    //Метод проверки баланса картьы
+    //Метод проверки баланса карты
     //Сперва находит элемент карты по селектору
     //Во вторых проверяет его видимость
-    //В третьих проверяет наличие баланса заданное через параметр
+    //В третьих проверяет наличие баланса заданное через параметр int expectedBalance
     public void checkingbalance(DataHelper.CardInfo cardInfo, int expectedBalance) {
 
         getCardElement(cardInfo).shouldBe(Condition.visible).shouldHave(text(balanceStart + expectedBalance + balanceFinish));

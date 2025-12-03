@@ -20,26 +20,16 @@ public class DataHelper {
         return new Authorization("vasya", "qwerty123");
     }
 
-    public static Authorization getUserTwoInfo() {
-
-        return new Authorization("kola", "qwerty123");
-    }
-
     // В данном методе в скобках мы указываем, что он принимает аргумент (Authorization user),
     // Т.е. метод может принимать данные о пользователе.
     // Если данный аргумент не указать, то в тесте при вызове метода будет возникать ошибка.
-    // Поэтому в тесте, при вызове метода var code = DataHelper.getCode(info),
-    // В скобках мы пишем переменную (info), являющейся аргументом.
+    // Поэтому в тесте, при вызове метода var code = DataHelper.getCode(userInfo),
+    // В скобках мы пишем переменную (userInfo), являющейся аргументом.
     // Переменная info в тесте отвечает за вызов метода получения данных о пользователе var info = getUserInfo().
 
     public static VerificationСode getCode(Authorization user) {
 
         return new VerificationСode("12345");
-    }
-
-    public static VerificationСode getInvalidCode(Authorization user) {
-
-        return new VerificationСode("1234");
     }
 
     public static CardInfo getFirstCard() {
@@ -52,16 +42,21 @@ public class DataHelper {
         return new CardInfo("5559 0000 0000 0002", "0f3f5c2a-249e-4c3d-8287-09f7a039391d");
     }
 
-    public static int generateAmount() {
+    // Метод генерации валидной суммы зависящей от суммы баланса
+    // Класс Math. позволяет вызывать множество методов, которые выполняют математические операции
+    // В частности метод abs() преобразует отрицательное число в положительное
+    public static int generateValidAmmount (int balance) {
 
-        // Создаем переменную random класса Random, который позволяет использовать методы для генерации случайных чисел
-        Random random = new Random();
-        // Создаем массив с названиями городов
-        int amount[] = {5000, 10000, 10001};
-        // создаем переменную rand, которой передаем случайное значение массива city с помощью переменной random и
-        // метода .nextInt(city.length)
-        int rand = random.nextInt(amount.length);
-        return amount[rand];
+        return Math.abs(balance) / 10;
+
+    }
+    // Метод генерации не валидной суммы зависящей от суммы баланса
+    // Класс Math. позволяет вызывать множество методов, которые выполняют математические операции
+    // В частности метод abs() преобразует отрицательное число в положительное
+    public static int generateInvalidAmmount (int balance) {
+
+        return Math.abs(balance) * 5 ;
+
     }
 
     @Value

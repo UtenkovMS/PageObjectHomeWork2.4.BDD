@@ -5,8 +5,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.netology.data.DataHelper;
 import ru.netology.pageobject.DashBoardPage;
-import ru.netology.pageobject.InvalidLoginPage;
-import ru.netology.pageobject.InvalidVerificationPage;
 import ru.netology.pageobject.LoginPage;
 
 import static com.codeborne.selenide.Selenide.open;
@@ -27,29 +25,23 @@ public class TestingMoneyTransfer {
 
         // Открытие стартовой страницы приложения
         open("http://localhost:9999");
-    }
 
-    @Test
-    // Должен авторизировать клиента и выполнить перевод денег
-    @DisplayName("Should authorize user and transfer money")
-    void shouldAuthorizeUserAndTransferMoney() {
-
-        // Получаем данные о пользователе и присваиваем их переменной info
-        var info = DataHelper.getUserInfo();
-        // Запрашиваем код пользователя с данными присвоенными переменной info
-        var code = DataHelper.getCode(info);
+        // Получаем данные о пользователе и присваиваем их переменной userInfo
+        var userInfo = DataHelper.getUserInfo();
+        // Запрашиваем код верификации для пользователя с переменной userInfo
+        var code = DataHelper.getCode(userInfo);
 
         // Авторизация пользователя
-        // Обращение к странице авторизации пользователя через переменную loginPage
+        // Обращаемся к странице авторизации пользователя через переменную loginPage
         var loginPage = new LoginPage();
 
-        // Через переменную loginPage вызываем метод авторизации пользователя .authorizationUser(info)
-        // В который передаем данные о пользователе через переменную (info)
+        // Через переменную loginPage вызываем метод авторизации пользователя .authorizationUser(userInfo)
+        // В который передаем данные о пользователе через переменную (userInfo)
         // Авторизированной странице присваиваем переменную verificationPage
-        var verificationPage = loginPage.authorizationUser(info);
+        var verificationPage = loginPage.authorizationUser(userInfo);
 
         // Через переменную verificationPage вызываем метод verificationUser(code)
-        // И передаем в качестве параметра код авторизации
+        // В который передаем в качестве параметра код авторизации (code)
         // Верифицированной странице присваиваем переменную dashBoardPage
         dashBoardPage = verificationPage.verificationUser(code);
 
@@ -57,95 +49,65 @@ public class TestingMoneyTransfer {
         cardFirst = DataHelper.getFirstCard();
         cardTwo = DataHelper.getTwoCard();
 
-        // Метод генеарции суммы начисления
-        amountCard = DataHelper.generateAmount();
+        // Получение балансов карт
 
-        // Проверка текущего баланса карты
-        currentBalanceTwoCard = dashBoardPage.getCardBalance(cardTwo);
+        //Баланс первой карты "5559 0000 0000 0001"
         currentBalanceFirstCard = dashBoardPage.getCardBalance(cardFirst);
 
-        //Перевод средств с карты на карту
-        // Условие. Если баланс второй карты меньше суммы перевода
-        if (currentBalanceTwoCard < amountCard) {
+        //Баланс второй карты "5559 0000 0000 0002"
+        currentBalanceTwoCard = dashBoardPage.getCardBalance(cardTwo);
 
-            //Выбор карты
-            var selectCard = dashBoardPage.selectCard(cardFirst);
+    }
 
-            // То появляется информационное сообщение о том что, сумма перевода не может превышать баланс карты.
-            selectCard.erorMassage("Сумма перевода не может превышать баланс карты");
+    @Test
+    // Должен авторизировать клиента и выполнить перевод валидной суммы
+    @DisplayName("Should authorize user and transfer valid amount money")
+    void shouldAuthorizeUserAndTransferValidAmountMoney() {
 
-            //Иначе, если условие не выполняется осуществляется перевод средств
-        } else {
 
-            // Выбор карты
-            var selectCard = dashBoardPage.selectCard(cardFirst);
-            // Перевод средств
-            var transferPage = selectCard.transferMoney(cardTwo, amountCard);
+        // Метод генеарции валидной суммы начисления
+        amountCard = DataHelper.generateValidAmmount(currentBalanceTwoCard);
 
-        }
+        //Выбор карты
+        var selectCard = dashBoardPage.selectCard(cardFirst);
 
-        //Обновление баланса карт.
+        // Перевод средств
+        var transferPage = selectCard.transferMoney(cardTwo, amountCard);
+
+        //Обновление баланса карт
         dashBoardPage.reloadBalance();
 
         // Проверка соответствия ожидаемых и фактических балансов карт
         dashBoardPage.checkingbalance(cardFirst, currentBalanceFirstCard + amountCard);
         dashBoardPage.checkingbalance(cardTwo, currentBalanceTwoCard - amountCard);
 
-        System.out.println("Сумма перевода: " + amountCard);
-        System.out.println("Баланс карты 5559 0000 0000 0001: " + (currentBalanceFirstCard + amountCard));
-        System.out.println("Баланс карты 5559 0000 0000 0002: " + (currentBalanceTwoCard - amountCard));
-
     }
 
     @Test
-    // Должен авторизировать невалидного пользователя
-    @DisplayName("Should authorize invalid user")
-    void shouldAuthorizeInvalidUser() {
+    // Должен авторизировать клиента и выполнить перевод валидной суммы
+    @DisplayName("Should authorize user and transfer valid amount money")
+    void shouldAuthorizeUserAndTransferInvalidAmountMoney(){
 
-        // Получаем данные о пользователе и присваиваем их переменной info
-        var info = DataHelper.getUserTwoInfo();
+        // Метод генеарции невалидной суммы начисления
+        amountCard = DataHelper.generateInvalidAmmount(currentBalanceTwoCard);
 
-        // Авторизация пользователя
-        // Обращение к странице авторизации пользователя через переменную loginPage
-        var invalidLoginPage = new InvalidLoginPage();
+        //Выбор карты
+        var selectCard = dashBoardPage.selectCard(cardFirst);
 
-        // Через переменную loginPage вызываем метод авторизации пользователя .authorizationUser(info)
-        // В который передаем данные о пользователе через переменную (info)
-        // Авторизированной странице присваиваем переменную verificationPage
-        invalidLoginPage.authorizationInvalidUser(info);
-        invalidLoginPage.erorMassage("Ошибка! Неверно указан логин или пароль");
+        // Перевод средств
+        var transferPage = selectCard.transferMoney(cardTwo, amountCard);
 
-    }
+        // При переводе невалидной суммы появляется информационное сообщение
+        // О том, что сумма перевода не может превышать баланс карты.
+            selectCard.erorMassage("Сумма перевода не может превышать баланс карты");
 
-    @Test
-    // Должен авторизировать валидного пользователя с невалидным кодом авторизации
-    @DisplayName("Should authorize valid user with an invalid authorization code ")
-    void shouldAuthorizeInvalidinvalidAuthorizationCode() {
+        //Обновление баланса карт
+        dashBoardPage.reloadBalance();
 
-        // Получаем данные о пользователе и присваиваем их переменной info
-        var info = DataHelper.getUserInfo();
-        // Получаем неверный код из метода getInvalidCode(info)
-        var code = DataHelper.getInvalidCode(info);
-
-        // Авторизация пользователя
-        // Обращение к странице авторизации пользователя через переменную loginPage
-        var loginPage = new LoginPage();
-
-        // Через переменную loginPage вызываем метод авторизации пользователя .authorizationUser(info)
-        // В который передаем данные о пользователе через переменную (info)
-        // Авторизированной странице присваиваем переменную verificationPage
-
-        loginPage.authorizationUser(info);
-
-        // Через переменную verificationPage вызываем метод verificationUser(code)
-        // И передаем в качестве параметра код авторизации
-        // Верифицированной странице присваиваем переменную dashBoardPage
-
-        var invalidVerificationPage = new InvalidVerificationPage();
-
-        invalidVerificationPage.invalidVerificationUser(code);
-
-        invalidVerificationPage.erorMassage("Ошибка! Неверно указан код! Попробуйте ещё раз.");
+        // Проверка соответствия ожидаемых и фактических балансов карт
+        dashBoardPage.checkingbalance(cardFirst, currentBalanceFirstCard);
+        dashBoardPage.checkingbalance(cardTwo, currentBalanceTwoCard);
 
     }
+
 }
