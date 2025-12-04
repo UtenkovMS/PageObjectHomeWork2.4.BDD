@@ -84,7 +84,7 @@ public class TestingMoneyTransfer {
     }
 
     @Test
-    // Должен авторизировать клиента и выполнить перевод валидной суммы
+    // Должен авторизировать клиента и выполнить перевод не валидной суммы
     @DisplayName("Should authorize user and transfer valid amount money")
     void shouldAuthorizeUserAndTransferInvalidAmountMoney(){
 
