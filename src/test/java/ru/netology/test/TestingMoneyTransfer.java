@@ -85,10 +85,10 @@ public class TestingMoneyTransfer {
 
     @Test
     // Должен авторизировать клиента и выполнить перевод не валидной суммы
-    @DisplayName("Should authorize user and transfer valid amount money")
+    @DisplayName("Should authorize user and transfer invalid amount money")
     void shouldAuthorizeUserAndTransferInvalidAmountMoney(){
 
-        // Метод генеарции невалидной суммы начисления
+        // Метод генерации невалидной суммы начисления
         amountCard = DataHelper.generateInvalidAmmount(currentBalanceTwoCard);
 
         //Выбор карты
