@@ -8,6 +8,7 @@ import ru.netology.pageobject.DashBoardPage;
 import ru.netology.pageobject.LoginPage;
 
 import static com.codeborne.selenide.Selenide.open;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class TestingMoneyTransfer {
 
@@ -78,13 +79,20 @@ public class TestingMoneyTransfer {
         dashBoardPage.reloadBalance();
 
         // Проверка соответствия ожидаемых и фактических балансов карт
-        dashBoardPage.checkingbalance(cardFirst, currentBalanceFirstCard + amountCard);
-        dashBoardPage.checkingbalance(cardTwo, currentBalanceTwoCard - amountCard);
+        // Такой способ реализации проверки соответствия ожидаемого и фактического результата
+        // позволяет выполнять проверки последовательно, сперва первую, потом втору и тд.
+        // Если такой способ не реализовать, то будет выполняться только первая проверка.
+
+        assertAll (
+
+                () -> dashBoardPage.checkingbalance(cardFirst, currentBalanceFirstCard + amountCard),
+                () -> dashBoardPage.checkingbalance(cardTwo, currentBalanceTwoCard - amountCard)
+        );
 
     }
 
     @Test
-    // Должен авторизировать клиента и выполнить перевод не валидной суммы
+    // Должен авторизировать клиента и выполнить перевод невалидной суммы
     @DisplayName("Should authorize user and transfer invalid amount money")
     void shouldAuthorizeUserAndTransferInvalidAmountMoney(){
 
@@ -95,18 +103,45 @@ public class TestingMoneyTransfer {
         var selectCard = dashBoardPage.selectCard(cardFirst);
 
         // Перевод средств
-        var transferPage = selectCard.transferMoney(cardTwo, amountCard);
-
-        // При переводе невалидной суммы появляется информационное сообщение
-        // О том, что сумма перевода не может превышать баланс карты.
-            selectCard.erorMassage("Сумма перевода не может превышать баланс карты");
-
-        //Обновление баланса карт
-        dashBoardPage.reloadBalance();
+        selectCard.transferMoney(cardTwo, amountCard);
 
         // Проверка соответствия ожидаемых и фактических балансов карт
-        dashBoardPage.checkingbalance(cardFirst, currentBalanceFirstCard);
-        dashBoardPage.checkingbalance(cardTwo, currentBalanceTwoCard);
+        // Такой способ реализации проверки соответствия ожидаемого и фактического результата assertAll ()
+        // Позволяет выполнять проверки последовательно, сперва первую, потом вторую и тд.
+        // Если такой способ не реализовать, то будет выполняться только первая проверка.
+
+        dashBoardPage.reloadBalance();
+
+        assertAll (
+
+                () -> dashBoardPage.checkingbalance(cardFirst, currentBalanceFirstCard),
+                () -> dashBoardPage.checkingbalance(cardTwo, currentBalanceTwoCard)
+        );
+
+    }
+
+    @Test
+    // Должен авторизировать клиента, выполнить перевод невалидной суммы и проверить сообщение об ошибке
+    @DisplayName("Should authorize user and transfer invalid amount and сheck eror massage")
+    void shouldAuthorizeUserAndTransferInvalidAmountAndCheckErorMassage(){
+
+        // Метод генерации невалидной суммы начисления
+        amountCard = DataHelper.generateInvalidAmmount(currentBalanceTwoCard);
+
+        //Выбор карты
+        var selectCard = dashBoardPage.selectCard(cardFirst);
+
+        // Перевод средств
+        selectCard.transferMoney(cardTwo, amountCard);
+
+        // Проверка соответствия ожидаемых и фактических балансов карт
+        // Такой способ реализации проверки соответствия ожидаемого и фактического результата assertAll ()
+        // Позволяет выполнять проверки последовательно, сперва первую, потом вторую и тд.
+        // Если такой способ не реализовать, то будет выполняться только первая проверка.
+
+        selectCard.erorMassage("Сумма перевода не может превышать баланс карты");
+
+        dashBoardPage.reloadBalance();
 
     }
 
