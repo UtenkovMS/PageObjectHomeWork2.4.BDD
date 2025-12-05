@@ -47,7 +47,9 @@ public class TransferPage {
     // Означающее, что метод будет ожидать в качестве аргумента текст об ошибке
     public void erorMassage(String expectedText) {
 
-        erorMassage.shouldBe(Condition.visible, Duration.ofSeconds(7)).shouldHave(Condition.text(expectedText));
+//        erorMassage.shouldBe(Condition.visible, Duration.ofSeconds(7)).shouldHave(Condition.text(expectedText));
+        erorMassage.shouldHave(Condition.text(expectedText))
+                .shouldBe(Condition.visible, Duration.ofSeconds(7));
     }
 
 }
