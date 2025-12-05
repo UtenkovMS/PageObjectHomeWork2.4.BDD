@@ -110,38 +110,14 @@ public class TestingMoneyTransfer {
         // Позволяет выполнять проверки последовательно, сперва первую, потом вторую и тд.
         // Если такой способ не реализовать, то будет выполняться только первая проверка.
 
-        dashBoardPage.reloadBalance();
 
         assertAll (
 
+                () -> selectCard.erorMassage("Сумма перевода не может превышать баланс карты"),
+                () -> dashBoardPage.reloadBalance(),
                 () -> dashBoardPage.checkingbalance(cardFirst, currentBalanceFirstCard),
                 () -> dashBoardPage.checkingbalance(cardTwo, currentBalanceTwoCard)
         );
-
-    }
-
-    @Test
-    // Должен авторизировать клиента, выполнить перевод невалидной суммы и проверить сообщение об ошибке
-    @DisplayName("Should authorize user and transfer invalid amount and сheck eror massage")
-    void shouldAuthorizeUserAndTransferInvalidAmountAndCheckErorMassage(){
-
-        // Метод генерации невалидной суммы начисления
-        amountCard = DataHelper.generateInvalidAmmount(currentBalanceTwoCard);
-
-        //Выбор карты
-        var selectCard = dashBoardPage.selectCard(cardFirst);
-
-        // Перевод средств
-        selectCard.transferMoney(cardTwo, amountCard);
-
-        // Проверка соответствия ожидаемых и фактических балансов карт
-        // Такой способ реализации проверки соответствия ожидаемого и фактического результата assertAll ()
-        // Позволяет выполнять проверки последовательно, сперва первую, потом вторую и тд.
-        // Если такой способ не реализовать, то будет выполняться только первая проверка.
-
-        selectCard.erorMassage("Сумма перевода не может превышать баланс карты");
-
-        dashBoardPage.reloadBalance();
 
     }
 
